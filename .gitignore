@@ -1,0 +1,10 @@
+.env
+*.env
+!.env.example
+__pycache__/
+*.pyc
+*.log
+data_bench/
+kg_out*/
+results*/
+tables_out/
