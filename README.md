@@ -1,25 +1,25 @@
 # SchemaSigma (SIGMA-KG)
 
-Code for the paper *SchemaSigma: Schema-Constrained Generation of Sigma Detection Rules from Cyber Threat Intelligence Reports* (IEEE ISAICS 2026).
+Code for the paper _SchemaSigma: Schema-Constrained Generation of Sigma Detection Rules from Cyber Threat Intelligence Reports_ (IEEE ISAICS 2026).
 
 SchemaSigma turns a cyber threat intelligence (CTI) report into a Sigma detection rule. A knowledge graph mined from the public SigmaHQ rule set tells the language model which log sources, fields and modifiers are legal, and retrieved expert rules supply examples. A validator removes any field the graph does not allow.
 
 ## Contents
 
-| File | What it does |
-|---|---|
-| `sk2_benchmark.py` | Builds the benchmark: pairs SigmaHQ rules with the CTI articles they cite and scores how answerable each article is |
-| `sigma_kg_miner.py` | Mines the schema knowledge graph from SigmaHQ rules, excluding the benchmark rules |
-| `sk2_kg.py` | Loads and queries the graph (JSON by default, Neo4j optional) |
-| `sk2_split.py` | Article-grouped train/test split (seed 20261026) |
-| `sk2_retrieval.py` | Exemplar retrieval (TF-IDF over training articles) |
-| `sk2_extractor.py` | Schema-grounded generation and validation with an LLM |
-| `sk2_evaluator.py` | All metrics, bootstrap CIs and paired tests |
-| `sk2_run.py` | Runs the four configurations (`full`, `no_kg`, `no_retrieval`, `no_both`) |
-| `baseline_nn.py` | Nearest-neighbour and majority baselines (no LLM) |
-| `analysis/analyse_results.py` | Table II and all paired tests, from saved outputs |
-| `analysis/paper_tables.py` | Table I and Table III, from saved outputs |
-| `config/primary_exclusion_ids.json` | The 94 test ids removed to form the primary set (n = 132) |
+| File                                | What it does                                                                                                        |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `sk2_benchmark.py`                  | Builds the benchmark: pairs SigmaHQ rules with the CTI articles they cite and scores how answerable each article is |
+| `sigma_kg_miner.py`                 | Mines the schema knowledge graph from SigmaHQ rules, excluding the benchmark rules                                  |
+| `sk2_kg.py`                         | Loads and queries the graph (JSON by default, Neo4j optional)                                                       |
+| `sk2_split.py`                      | Article-grouped train/test split (seed 20261026)                                                                    |
+| `sk2_retrieval.py`                  | Exemplar retrieval (TF-IDF over training articles)                                                                  |
+| `sk2_extractor.py`                  | Schema-grounded generation and validation with an LLM                                                               |
+| `sk2_evaluator.py`                  | All metrics, bootstrap CIs and paired tests                                                                         |
+| `sk2_run.py`                        | Runs the four configurations (`full`, `no_kg`, `no_retrieval`, `no_both`)                                           |
+| `baseline_nn.py`                    | Nearest-neighbour and majority baselines (no LLM)                                                                   |
+| `analysis/analyse_results.py`       | Table II and all paired tests, from saved outputs                                                                   |
+| `analysis/paper_tables.py`          | Table I and Table III, from saved outputs                                                                           |
+| `config/primary_exclusion_ids.json` | The 94 test ids removed to form the primary set (n = 132)                                                           |
 
 ## Setup
 
@@ -112,31 +112,6 @@ python analysis/analyse_results.py . tables_out    # Table II and paired tests
 python analysis/paper_tables.py . tables_out       # Tables I and III
 ```
 
-## Expected results
-
-Primary set, GPT-4o-mini, n = 132 (Tables I and II):
-
-| | full | no_kg | no_retrieval | no_both | nn | majority |
-|---|---|---|---|---|---|---|
-| Field validity | 1.000 | 0.795 | 1.000 | 0.517 | 0.993 | 1.000 |
-| Rules with an invalid field | 0 | 38 | 0 | 65 | | |
-| Deployable rules | 92 | 67 | 78 | 20 | | |
-| Log source exact | 0.697 | 0.644 | 0.667 | 0.394 | 0.432 | 0.629 |
-| Field names F1 | 0.478 | 0.425 | 0.390 | 0.138 | 0.357 | 0.552 |
-| Field+modifier F1 | 0.264 | 0.250 | 0.033 | 0.009 | 0.273 | 0.005 |
-| Strict value F1 | 0.088 | 0.095 | 0.047 | 0.083 | 0.018 | 0 |
-| Semantic value F1 | 0.220 | 0.194 | 0.122 | 0.195 | 0.034 | 0 |
-
-Cross-model, `full` vs `no_kg` on the same 100 reports (Table III):
-
-| | GPT-4o-mini | GPT-4o | Gemini 3.8 Flash |
-|---|---|---|---|
-| Field validity | 1.000 vs 0.797 | 1.000 vs 0.897 | 1.000 vs 0.985 |
-| Rules with an invalid field | 0 vs 27 | 0 vs 13 | 0 vs 2 |
-| Deployable rules | 73 vs 51 | 67 vs 62 | 75 vs 70 |
-
-The two analysis scripts reproduce every number above exactly from the saved per-instance outputs of the paper run.
-
 ## How close a fresh run will be
 
 Steps 2 and 5–7 depend on things outside this code, so a fresh run will be close to the paper but not identical:
@@ -150,7 +125,3 @@ The graph-validity result does not depend on these: with the graph, every emitte
 ## Licences
 
 SigmaHQ rules are under the Detection Rule License (DRL) 1.1. The CTI articles belong to their publishers and are not redistributed here; step 2 downloads them from their original URLs.
-
-## Citation
-
-If you use this code, please cite the paper (citation details will be added after publication).
